@@ -31,10 +31,11 @@ function isValidEmail(email: string): boolean {
 /**
  * 列内のメール形式の値の数をカウント
  */
-function countEmailLikeValues(column: string[], data: ParsedRow[]): number {
+function countEmailLikeValues(column: string, data: ParsedRow[]): number {
   let count = 0;
   for (const row of data) {
-    const value = row[column]?.trim() || '';
+    const rawValue = row[column];
+    const value = typeof rawValue === 'string' ? rawValue.trim() : '';
     if (value && isValidEmail(value)) {
       count++;
     }
@@ -89,7 +90,8 @@ function extractEmailsFromColumn(column: string | null, data: ParsedRow[]): stri
 
   const emails: string[] = [];
   for (const row of data) {
-    const value = row[column]?.trim() || '';
+    const rawValue = row[column];
+    const value = typeof rawValue === 'string' ? rawValue.trim() : '';
     if (value && isValidEmail(value)) {
       emails.push(value.toLowerCase());
     }
@@ -107,7 +109,8 @@ function extractRawValuesFromColumn(column: string | null, data: ParsedRow[]): s
 
   const values: string[] = [];
   for (const row of data) {
-    const value = row[column]?.trim() || '';
+    const rawValue = row[column];
+    const value = typeof rawValue === 'string' ? rawValue.trim() : '';
     if (value) {
       values.push(value);
     }
@@ -124,7 +127,7 @@ function extractEmailsFromAllCells(data: ParsedRow[]): string[] {
 
   for (const row of data) {
     for (const value of Object.values(row)) {
-      const trimmed = value?.trim() || '';
+      const trimmed = typeof value === 'string' ? value.trim() : '';
       if (trimmed && isValidEmail(trimmed)) {
         const lower = trimmed.toLowerCase();
         if (!seen.has(lower)) {
